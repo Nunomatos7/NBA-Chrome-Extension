@@ -1,0 +1,11 @@
+{
+    "name": "Daily NBA Schedule",
+    "version": "1.0.0",
+    "description": "A list of upcoming NBA games",
+    "manifest_version": 3,
+    "author": "Nuno Matos",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Daily NBA Schedule"
+    }
+}
