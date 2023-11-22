@@ -1,0 +1,65 @@
+/* Reset default margin and padding */
+body, h1, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Container styling */
+  .container {
+    width: 300px; /* Set a specific width */
+    padding: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header styling */
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Game list styling */
+  .games-list {
+    display: grid;
+    grid-gap: 10px;
+  }
+  
+  /* Individual game item styling */
+  .game-item {
+    background-color: #ddcfcfb3;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Specific styling for game details */
+  .game-details {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* Styling for specific elements (e.g., scores, status) */
+  .score {
+    font-weight: bold;
+    margin: 0 5px;
+  }
+  
+  .status {
+    color: #007bff;
+  }
+  
+  /* Update CSS styles for the linescore table */
+.linescore-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .linescore-table td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+  }
+  
