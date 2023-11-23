@@ -1,70 +1,241 @@
-const date = new Date();
+async function fetchPlayerStatistics(gameId) {
+    const url = `https://api-nba-v1.p.rapidapi.com/players/statistics?game=${gameId}`;
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'b11c7d60bbmsh6027f68419566eap177772jsn6d61a497f998',
+            'X-RapidAPI-Host': 'api-nba-v1.p.rapidapi.com'
+        }
+    };
 
-let day = date.getDate();
-let month = date.getMonth() + 1;
-let year = date.getFullYear();
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+        return result.response;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 
-// This arrangement can be altered based on how we want the date's format to appear.
-let currentDate = `${year}-${month}-${day}`;
+// Get the date-picker input element
+const datePicker = document.getElementById('date-picker');
 
-async function fetchData() {
+async function fetchData(selectedDate) {
+
+
     const url = 'https://api-nba-v1.p.rapidapi.com/games?date=';
-    const urlDate = currentDate;
-    const finalUrl = url + urlDate;
+    const finalUrl = url + selectedDate;
 
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '',
-            'X-RapidAPI-Host': ''
+            'X-RapidAPI-Key': 'b11c7d60bbmsh6027f68419566eap177772jsn6d61a497f998',
+            'X-RapidAPI-Host': 'api-nba-v1.p.rapidapi.com'
         }
     };
 
+    try {
+        const response = await fetch(finalUrl, options);
+        const result = await response.json();
+        const games = result.response;
 
-    const response = await fetch(finalUrl, options);
-    const result = await response.json();
-    console.log(result);
+        const gamesElement = document.getElementById("games");
+        for (const game of games) {
+            const homeLinescore = game.scores.home.linescore;
+            const awayLinescore = game.scores.visitors.linescore;
 
-    const games = result.response; // Access the 'response' array containing the games
+            const gameDiv = document.createElement("div");
+            gameDiv.classList.add("game-item");
 
-    const gameInfo = games.map(game => {
-        const homeTeam = game.teams.home.name; // Extract home team name
-        const awayTeam = game.teams.visitors.name; // Extract away team name
-        const gameTime = new Date(game.date.start).toLocaleTimeString(); // Extract game time
-        const homeScore = game.scores.home.points; // Extract home team score
-        const awayScore = game.scores.visitors.points; // Extract away team score
-        const gameStatus = game.status.long; // Extract game status (Finished/Ongoing/Scheduled)
-        const homeLinescore = game.scores.home.linescore;
-        const awayLinescore = game.scores.visitors.linescore;
-        const arena = game.arena.name || ''; // Extract arena name or set default to empty string
-        const city = game.arena.city || ''; // Extract city or set default to empty string
-        const gameLocation = arena && city ? `${arena}, ${city}` : 'Location details not available'; // Format game location
+            //console.log(game.status.long);
 
-        return { homeTeam, awayTeam, gameTime, homeScore, awayScore, gameStatus, homeLinescore, awayLinescore, gameLocation }; // Store in an object
-    });
-    
-    // Now 'gameInfo' contains detailed information for each game
-    console.log(gameInfo);
-    
-    // Display the additional details alongside team names and time
-    const gamesElement = document.getElementById("games");
-    gameInfo.forEach(game => {
-        const gameDiv = document.createElement("div");
-        gameDiv.classList.add("game-item");
-        gameDiv.innerHTML = `
-            <div class="game-details">
-                <p>${game.gameTime}</p>
-                <p>${game.homeTeam} <span class="score">${game.homeScore}</span> - <span class="score">${game.awayScore}</span> ${game.awayTeam} (<span class="status">${game.gameStatus}</span>)</p>
-                <table class="linescore-table">
-                <tr>${game.homeLinescore.map(score => `<td>${score}</td>`).join('')}</tr>
-                <tr>${game.awayLinescore.map(score => `<td>${score}</td>`).join('')}</tr>
-            </table>
-                <p>${game.gameLocation}</p>
-            </div>`;
-        gamesElement.appendChild(gameDiv);
-    });
-    
-    
+            if(game.status.long === "Finished"){
+
+                gameDiv.innerHTML = `
+                <div class="game-details">
+                    <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                    <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
+                    <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
+                    <table class="linescore-table">
+                        <tr>${homeLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
+                        <tr>${awayLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
+                    </table>
+                </div>`;
+                gamesElement.appendChild(gameDiv);
+
+                const playerStats = await fetchPlayerStatistics(game.id);
+
+                if (playerStats) {
+                    const playerWithMostPoints = playerStats.reduce((maxPlayer, player) => {
+                        return player.points > maxPlayer.points ? player : maxPlayer;
+                    }, { points: -Infinity });
+                
+                    const playerName = `${playerWithMostPoints.player.firstname} ${playerWithMostPoints.player.lastname}`;
+                
+                    const playerTable = document.createElement("table");
+                    playerTable.classList.add("player-details");
+                
+                    const firstRow = document.createElement("tr");
+                
+                    const playerNameCell = document.createElement("td");
+                    playerNameCell.textContent = playerName;
+                    playerNameCell.rowSpan = 2;
+                    playerNameCell.classList.add("player-name");
+                
+                    const pointsLabelCell = createTableCell("Points");
+                    const reboundsLabelCell = createTableCell("Rebounds");
+                    const assistsLabelCell = createTableCell("Assists");
+                
+                    firstRow.appendChild(playerNameCell);
+                    firstRow.appendChild(pointsLabelCell);
+                    firstRow.appendChild(reboundsLabelCell);
+                    firstRow.appendChild(assistsLabelCell);
+                
+                    const secondRow = document.createElement("tr");
+                
+                    const pointsValueCell = createTableCell(playerWithMostPoints.points);
+                    const reboundsValueCell = createTableCell(playerWithMostPoints.totReb);
+                    const assistsValueCell = createTableCell(playerWithMostPoints.assists);
+                
+                    secondRow.appendChild(pointsValueCell);
+                    secondRow.appendChild(reboundsValueCell);
+                    secondRow.appendChild(assistsValueCell);
+                
+                    playerTable.appendChild(firstRow);
+                    playerTable.appendChild(secondRow);
+                
+                    const bestPlayerText = document.createElement("strong");
+                    bestPlayerText.textContent = 'Top Performer';
+
+                    const hrElement = document.createElement("hr"); // Create the horizontal line
+                    hrElement.classList.add("separator");
+                    
+                    const playerDetails = document.createElement("div");
+                    playerDetails.classList.add("player-info");
+                    playerDetails.appendChild(hrElement);
+                    playerDetails.appendChild(bestPlayerText);
+                    playerDetails.appendChild(playerTable);
+                
+                    gameDiv.querySelector('.game-details').appendChild(playerDetails);
+                }
+                function createTableCell(text) {
+                    const cell = document.createElement("td");
+                    cell.textContent = text;
+                    return cell;
+                }
+            }else if(game.status.long === "Scheduled"){
+                gameDiv.innerHTML = `
+                <div class="game-details">
+                    <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                    <p>${game.teams.home.name} vs ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
+                    <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
+                </div>`;
+            gamesElement.appendChild(gameDiv);
+            }else if(game.status.long === "In Play"){
+                gameDiv.innerHTML = `
+                <div class="game-details">
+                    <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                    <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (Q${game.periods.current} - ${game.status.clock} </span>)</p>
+                    <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
+                </div>`;
+            gamesElement.appendChild(gameDiv);
+            const playerStats = await fetchPlayerStatistics(game.id);
+
+                if (playerStats) {
+                    const playerWithMostPoints = playerStats.reduce((maxPlayer, player) => {
+                        return player.points > maxPlayer.points ? player : maxPlayer;
+                    }, { points: -Infinity });
+                
+                    const playerName = `${playerWithMostPoints.player.firstname} ${playerWithMostPoints.player.lastname}`;
+                
+                    const playerTable = document.createElement("table");
+                    playerTable.classList.add("player-details");
+                
+                    const firstRow = document.createElement("tr");
+                
+                    const playerNameCell = document.createElement("td");
+                    playerNameCell.textContent = playerName;
+                    playerNameCell.rowSpan = 2;
+                    playerNameCell.classList.add("player-name");
+                
+                    const pointsLabelCell = createTableCell("Points");
+                    const reboundsLabelCell = createTableCell("Rebounds");
+                    const assistsLabelCell = createTableCell("Assists");
+                
+                    firstRow.appendChild(playerNameCell);
+                    firstRow.appendChild(pointsLabelCell);
+                    firstRow.appendChild(reboundsLabelCell);
+                    firstRow.appendChild(assistsLabelCell);
+                
+                    const secondRow = document.createElement("tr");
+                
+                    const pointsValueCell = createTableCell(playerWithMostPoints.points);
+                    const reboundsValueCell = createTableCell(playerWithMostPoints.totReb);
+                    const assistsValueCell = createTableCell(playerWithMostPoints.assists);
+                
+                    secondRow.appendChild(pointsValueCell);
+                    secondRow.appendChild(reboundsValueCell);
+                    secondRow.appendChild(assistsValueCell);
+                
+                    playerTable.appendChild(firstRow);
+                    playerTable.appendChild(secondRow);
+                
+                    const bestPlayerText = document.createElement("strong");
+                    bestPlayerText.textContent = 'Top Performer';
+
+                    const hrElement = document.createElement("hr"); // Create the horizontal line
+                    hrElement.classList.add("separator");
+                    
+                    const playerDetails = document.createElement("div");
+                    playerDetails.classList.add("player-info");
+                    playerDetails.appendChild(hrElement);
+                    playerDetails.appendChild(bestPlayerText);
+                    playerDetails.appendChild(playerTable);
+                
+                    gameDiv.querySelector('.game-details').appendChild(playerDetails);
+                }
+                function createTableCell(text) {
+                    const cell = document.createElement("td");
+                    cell.textContent = text;
+                    return cell;
+                }
+            }
+
+            
+
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
-fetchData();
+// Get today's date
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, '0');
+const day = String(today.getDate()).padStart(2, '0');
+const formattedDate = `${year}-${month}-${day}`;
+
+// Set the default value of the date-picker input to today's date
+datePicker.value = formattedDate;
+
+// Fetch data initially for today's date
+fetchData(formattedDate);
+
+// Add an event listener to the date-picker input
+datePicker.addEventListener('change', async () => {
+    const selectedDate = datePicker.value;
+    clearGames();
+    // Fetch data based on the selected date
+    await fetchData(selectedDate);
+    fetchData(selectedDate);
+});
+
+const gamesElement = document.getElementById("games");
+
+
+function clearGames() {
+    gamesElement.innerHTML = ""; // Clear the existing games
+}
+
