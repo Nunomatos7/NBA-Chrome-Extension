@@ -1,3 +1,5 @@
+import { name } from './names.js';
+
 async function fetchPlayerStatistics(gameId) {
     const url = `https://api-nba-v1.p.rapidapi.com/players/statistics?game=${gameId}`;
     const options = {
@@ -20,7 +22,15 @@ async function fetchPlayerStatistics(gameId) {
 
 // Get the date-picker input element
 const datePicker = document.getElementById('date-picker');
+const viewSwitch = document.getElementById('view-switch');
+const gamesElement = document.getElementById("games");
 
+
+viewSwitch.addEventListener('change', async () => {
+    const selectedDate = datePicker.value;
+    clearGames();
+    await fetchData(selectedDate);
+});
 async function fetchData(selectedDate) {
 
 
@@ -45,161 +55,203 @@ async function fetchData(selectedDate) {
             const homeLinescore = game.scores.home.linescore;
             const awayLinescore = game.scores.visitors.linescore;
 
-            const gameDiv = document.createElement("div");
-            gameDiv.classList.add("game-item");
+            
 
+            // Check the switch state to determine the view
+            const minimalistView = viewSwitch.checked;
+            const minimalistHomeName = name(game.teams.home.name);
+            const minimalistAwayName = name(game.teams.visitors.name);
             //console.log(game.status.long);
 
+            const gameDiv = document.createElement("div")
+            if(minimalistView){
+                gameDiv.classList.add("game-item-minimalist");
+            }else{
+                gameDiv.classList.add("game-item");
+            }
+            
             if(game.status.long === "Finished"){
+                if (minimalistView) {
+                    //console.log(game.teams.home.name);
+                    // Display minimalist view for finished games
+                    gameDiv.innerHTML = `
+                        <div class="game-details-minimalist">
+                            <p>${minimalistHomeName} <span class="score-minimalist">${game.scores.home.points}</span> - <span class="score-minimalist">${game.scores.visitors.points}</span> ${minimalistAwayName} (<span class="status">${game.status.long}</span>)</p>
+                        </div>`;
 
-                gameDiv.innerHTML = `
-                <div class="game-details">
-                    <p>${new Date(game.date.start).toLocaleTimeString()}</p>
-                    <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
-                    <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
-                    <table class="linescore-table">
-                        <tr>${homeLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
-                        <tr>${awayLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
-                    </table>
-                </div>`;
-                gamesElement.appendChild(gameDiv);
+                    gamesElement.appendChild(gameDiv);
+                }else{
+                    gameDiv.innerHTML = `
+                    <div class="game-details">
+                        <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                        <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
+                        <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
+                        <table class="linescore-table">
+                            <tr>${homeLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
+                            <tr>${awayLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
+                        </table>
+                    </div>`;
+                    gamesElement.appendChild(gameDiv);
 
-                const playerStats = await fetchPlayerStatistics(game.id);
+                    const playerStats = await fetchPlayerStatistics(game.id);
 
-                if (playerStats) {
-                    const playerWithMostPoints = playerStats.reduce((maxPlayer, player) => {
-                        return player.points > maxPlayer.points ? player : maxPlayer;
-                    }, { points: -Infinity });
-                
-                    const playerName = `${playerWithMostPoints.player.firstname} ${playerWithMostPoints.player.lastname}`;
-                
-                    const playerTable = document.createElement("table");
-                    playerTable.classList.add("player-details");
-                
-                    const firstRow = document.createElement("tr");
-                
-                    const playerNameCell = document.createElement("td");
-                    playerNameCell.textContent = playerName;
-                    playerNameCell.rowSpan = 2;
-                    playerNameCell.classList.add("player-name");
-                
-                    const pointsLabelCell = createTableCell("Points");
-                    const reboundsLabelCell = createTableCell("Rebounds");
-                    const assistsLabelCell = createTableCell("Assists");
-                
-                    firstRow.appendChild(playerNameCell);
-                    firstRow.appendChild(pointsLabelCell);
-                    firstRow.appendChild(reboundsLabelCell);
-                    firstRow.appendChild(assistsLabelCell);
-                
-                    const secondRow = document.createElement("tr");
-                
-                    const pointsValueCell = createTableCell(playerWithMostPoints.points);
-                    const reboundsValueCell = createTableCell(playerWithMostPoints.totReb);
-                    const assistsValueCell = createTableCell(playerWithMostPoints.assists);
-                
-                    secondRow.appendChild(pointsValueCell);
-                    secondRow.appendChild(reboundsValueCell);
-                    secondRow.appendChild(assistsValueCell);
-                
-                    playerTable.appendChild(firstRow);
-                    playerTable.appendChild(secondRow);
-                
-                    const bestPlayerText = document.createElement("strong");
-                    bestPlayerText.textContent = 'Top Performer';
-
-                    const hrElement = document.createElement("hr"); // Create the horizontal line
-                    hrElement.classList.add("separator");
+                    if (playerStats) {
+                        const playerWithMostPoints = playerStats.reduce((maxPlayer, player) => {
+                            return player.points > maxPlayer.points ? player : maxPlayer;
+                        }, { points: -Infinity });
                     
-                    const playerDetails = document.createElement("div");
-                    playerDetails.classList.add("player-info");
-                    playerDetails.appendChild(hrElement);
-                    playerDetails.appendChild(bestPlayerText);
-                    playerDetails.appendChild(playerTable);
+                        const playerName = `${playerWithMostPoints.player.firstname} ${playerWithMostPoints.player.lastname}`;
+                    
+                        const playerTable = document.createElement("table");
+                        playerTable.classList.add("player-details");
+                    
+                        const firstRow = document.createElement("tr");
+                    
+                        const playerNameCell = document.createElement("td");
+                        playerNameCell.textContent = playerName;
+                        playerNameCell.rowSpan = 2;
+                        playerNameCell.classList.add("player-name");
+                    
+                        const pointsLabelCell = createTableCell("Points");
+                        const reboundsLabelCell = createTableCell("Rebounds");
+                        const assistsLabelCell = createTableCell("Assists");
+                    
+                        firstRow.appendChild(playerNameCell);
+                        firstRow.appendChild(pointsLabelCell);
+                        firstRow.appendChild(reboundsLabelCell);
+                        firstRow.appendChild(assistsLabelCell);
+                    
+                        const secondRow = document.createElement("tr");
+                    
+                        const pointsValueCell = createTableCell(playerWithMostPoints.points);
+                        const reboundsValueCell = createTableCell(playerWithMostPoints.totReb);
+                        const assistsValueCell = createTableCell(playerWithMostPoints.assists);
+                    
+                        secondRow.appendChild(pointsValueCell);
+                        secondRow.appendChild(reboundsValueCell);
+                        secondRow.appendChild(assistsValueCell);
+                    
+                        playerTable.appendChild(firstRow);
+                        playerTable.appendChild(secondRow);
+                    
+                        const bestPlayerText = document.createElement("strong");
+                        bestPlayerText.textContent = 'Top Performer';
+
+                        const hrElement = document.createElement("hr"); // Create the horizontal line
+                        hrElement.classList.add("separator");
+                        
+                        const playerDetails = document.createElement("div");
+                        playerDetails.classList.add("player-info");
+                        playerDetails.appendChild(hrElement);
+                        playerDetails.appendChild(bestPlayerText);
+                        playerDetails.appendChild(playerTable);
+                    
+                        gameDiv.querySelector('.game-details').appendChild(playerDetails);
+                    }
+                    function createTableCell(text) {
+                        const cell = document.createElement("td");
+                        cell.textContent = text;
+                        return cell;
+                    }
+                }
+
                 
-                    gameDiv.querySelector('.game-details').appendChild(playerDetails);
-                }
-                function createTableCell(text) {
-                    const cell = document.createElement("td");
-                    cell.textContent = text;
-                    return cell;
-                }
             }else if(game.status.long === "Scheduled"){
-                gameDiv.innerHTML = `
-                <div class="game-details">
-                    <p>${new Date(game.date.start).toLocaleTimeString()}</p>
-                    <p>${game.teams.home.name} vs ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
-                    <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
-                </div>`;
-            gamesElement.appendChild(gameDiv);
+                if(minimalistView) {
+                    // Display minimalist view for scheduled games
+                    gameDiv.innerHTML = `
+                        <div class="game-details-minimalist">
+                            <p>${minimalistHomeName} vs ${minimalistAwayName} (<span class="status">${game.status.long}</span>)</p>
+                            <p style="text-align: center;">${new Date(game.date.start).toLocaleTimeString()}</p>
+                        </div>`;
+                    gamesElement.appendChild(gameDiv);
+                }else{
+                    gameDiv.innerHTML = `
+                    <div class="game-details">
+                        <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                        <p>${game.teams.home.name} vs ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
+                        <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
+                    </div>`;
+                    gamesElement.appendChild(gameDiv);
+                }
             }else if(game.status.long === "In Play"){
-                gameDiv.innerHTML = `
-                <div class="game-details">
-                    <p>${new Date(game.date.start).toLocaleTimeString()}</p>
-                    <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (Q${game.periods.current} - ${game.status.clock} </span>)</p>
-                    <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
-                </div>`;
-            gamesElement.appendChild(gameDiv);
-            const playerStats = await fetchPlayerStatistics(game.id);
+                if(minimalistView){
+                    // Display minimalist view for games in play
+                    gameDiv.innerHTML = `
+                        <div class="game-details-minimalist">
+                        <p>${minimalistHomeName} <span class="score-minimalist">${game.scores.home.points}</span> - <span class="score-minimalist">${game.scores.visitors.points}</span> ${minimalistAwayName} (Q${game.periods.current} - ${game.status.clock} </span>)</p>
+                        </div>`;
+                    gamesElement.appendChild(gameDiv);
+                }else{
+                    gameDiv.innerHTML = `
+                    <div class="game-details">
+                        <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                        <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (Q${game.periods.current} - ${game.status.clock} </span>)</p>
+                        <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
+                    </div>`;
+                    gamesElement.appendChild(gameDiv);
+                    const playerStats = await fetchPlayerStatistics(game.id);
 
-                if (playerStats) {
-                    const playerWithMostPoints = playerStats.reduce((maxPlayer, player) => {
-                        return player.points > maxPlayer.points ? player : maxPlayer;
-                    }, { points: -Infinity });
-                
-                    const playerName = `${playerWithMostPoints.player.firstname} ${playerWithMostPoints.player.lastname}`;
-                
-                    const playerTable = document.createElement("table");
-                    playerTable.classList.add("player-details");
-                
-                    const firstRow = document.createElement("tr");
-                
-                    const playerNameCell = document.createElement("td");
-                    playerNameCell.textContent = playerName;
-                    playerNameCell.rowSpan = 2;
-                    playerNameCell.classList.add("player-name");
-                
-                    const pointsLabelCell = createTableCell("Points");
-                    const reboundsLabelCell = createTableCell("Rebounds");
-                    const assistsLabelCell = createTableCell("Assists");
-                
-                    firstRow.appendChild(playerNameCell);
-                    firstRow.appendChild(pointsLabelCell);
-                    firstRow.appendChild(reboundsLabelCell);
-                    firstRow.appendChild(assistsLabelCell);
-                
-                    const secondRow = document.createElement("tr");
-                
-                    const pointsValueCell = createTableCell(playerWithMostPoints.points);
-                    const reboundsValueCell = createTableCell(playerWithMostPoints.totReb);
-                    const assistsValueCell = createTableCell(playerWithMostPoints.assists);
-                
-                    secondRow.appendChild(pointsValueCell);
-                    secondRow.appendChild(reboundsValueCell);
-                    secondRow.appendChild(assistsValueCell);
-                
-                    playerTable.appendChild(firstRow);
-                    playerTable.appendChild(secondRow);
-                
-                    const bestPlayerText = document.createElement("strong");
-                    bestPlayerText.textContent = 'Top Performer';
-
-                    const hrElement = document.createElement("hr"); // Create the horizontal line
-                    hrElement.classList.add("separator");
+                    if (playerStats) {
+                        const playerWithMostPoints = playerStats.reduce((maxPlayer, player) => {
+                            return player.points > maxPlayer.points ? player : maxPlayer;
+                        }, { points: -Infinity });
                     
-                    const playerDetails = document.createElement("div");
-                    playerDetails.classList.add("player-info");
-                    playerDetails.appendChild(hrElement);
-                    playerDetails.appendChild(bestPlayerText);
-                    playerDetails.appendChild(playerTable);
+                        const playerName = `${playerWithMostPoints.player.firstname} ${playerWithMostPoints.player.lastname}`;
+                    
+                        const playerTable = document.createElement("table");
+                        playerTable.classList.add("player-details");
+                    
+                        const firstRow = document.createElement("tr");
+                    
+                        const playerNameCell = document.createElement("td");
+                        playerNameCell.textContent = playerName;
+                        playerNameCell.rowSpan = 2;
+                        playerNameCell.classList.add("player-name");
+                    
+                        const pointsLabelCell = createTableCell("Points");
+                        const reboundsLabelCell = createTableCell("Rebounds");
+                        const assistsLabelCell = createTableCell("Assists");
+                    
+                        firstRow.appendChild(playerNameCell);
+                        firstRow.appendChild(pointsLabelCell);
+                        firstRow.appendChild(reboundsLabelCell);
+                        firstRow.appendChild(assistsLabelCell);
+                    
+                        const secondRow = document.createElement("tr");
+                    
+                        const pointsValueCell = createTableCell(playerWithMostPoints.points);
+                        const reboundsValueCell = createTableCell(playerWithMostPoints.totReb);
+                        const assistsValueCell = createTableCell(playerWithMostPoints.assists);
+                    
+                        secondRow.appendChild(pointsValueCell);
+                        secondRow.appendChild(reboundsValueCell);
+                        secondRow.appendChild(assistsValueCell);
+                    
+                        playerTable.appendChild(firstRow);
+                        playerTable.appendChild(secondRow);
+                    
+                        const bestPlayerText = document.createElement("strong");
+                        bestPlayerText.textContent = 'Top Performer';
+
+                        const hrElement = document.createElement("hr"); // Create the horizontal line
+                        hrElement.classList.add("separator");
+                        
+                        const playerDetails = document.createElement("div");
+                        playerDetails.classList.add("player-info");
+                        playerDetails.appendChild(hrElement);
+                        playerDetails.appendChild(bestPlayerText);
+                        playerDetails.appendChild(playerTable);
+                    
+                        gameDiv.querySelector('.game-details').appendChild(playerDetails);
+                    }
+                    function createTableCell(text) {
+                        const cell = document.createElement("td");
+                        cell.textContent = text;
+                        return cell;
+                    }
+                }
                 
-                    gameDiv.querySelector('.game-details').appendChild(playerDetails);
-                }
-                function createTableCell(text) {
-                    const cell = document.createElement("td");
-                    cell.textContent = text;
-                    return cell;
-                }
             }
 
             
@@ -232,7 +284,8 @@ datePicker.addEventListener('change', async () => {
     fetchData(selectedDate);
 });
 
-const gamesElement = document.getElementById("games");
+
+
 
 
 function clearGames() {

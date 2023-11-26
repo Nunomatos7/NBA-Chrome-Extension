@@ -11,8 +11,15 @@
   <div class="container">
     <h1>NBA Games Today</h1>
     <input type="date" id="date-picker">
-    <div id="games" class="games-list"></div>
+    <p style="color: white;">Minimal View <input type="checkbox" id="view-switch"> </p>
+
+    <div id="games" class="games-container">
+        <!-- Game items will be dynamically added here -->
+    </div>
+
+    
   </div>
-  <script src="script.js"></script>
+  <script src="names.js" type="module"></script>
+  <script src="script.js" type="module"></script>
 </body>
 </html>

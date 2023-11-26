@@ -27,6 +27,14 @@ h1 {
     font-weight: bold; /* Bolder font weight */
 }
 
+.games-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
 /* Game list styling */
 .games-list {
     display: grid;
@@ -44,11 +52,21 @@ h1 {
     flex-direction: column;
     align-items: center;
     border: 2px solid #ffffff; /* Dark blue border */
-    width: 80%; /* Set the width to fill the available space */
+    width: 90%; /* Set the width to fill the available space */
     max-width: 350px; /* Limit the maximum width for larger screens */
     margin-bottom: 20px; /* Add spacing between game containers */
 }
 
+.game-item.minimalist {
+    width: 100%;
+    
+}
+
+.game-details-minimalist {
+    width: fit-content;
+    color: #fff;
+    border-top: 2px solid #0E2135;
+}
 
 
 /* Specific styling for game details */
@@ -64,6 +82,11 @@ h1 {
     font-weight: bold;
     margin: 0 5px;
     color: #3564c0; /* Dark blue color */
+}
+
+.score-minimalist {
+    color: #0E2135;
+    font-weight: bolder;
 }
 
 .status {
@@ -112,6 +135,7 @@ h1 {
     color: #ffffff;
     font-size: 14px;
     line-height: 1.6;
+    max-width: 100%;
 }
 
 #date-picker {
