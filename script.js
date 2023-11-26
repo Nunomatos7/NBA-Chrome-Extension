@@ -76,7 +76,7 @@ async function fetchData(selectedDate) {
                     // Display minimalist view for finished games
                     gameDiv.innerHTML = `
                         <div class="game-details-minimalist">
-                            <p>${minimalistHomeName} <span class="score-minimalist">${game.scores.home.points}</span> - <span class="score-minimalist">${game.scores.visitors.points}</span> ${minimalistAwayName} (<span class="status">${game.status.long}</span>)</p>
+                            <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> ${minimalistHomeName.abbreviation} <span class="score-minimalist">${game.scores.home.points}</span> - <span class="score-minimalist">${game.scores.visitors.points}</span> ${minimalistAwayName.abbreviation} <img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"> <p class="status">${game.status.long}</p></p>
                         </div>`;
 
                     gamesElement.appendChild(gameDiv);
@@ -161,8 +161,8 @@ async function fetchData(selectedDate) {
                     // Display minimalist view for scheduled games
                     gameDiv.innerHTML = `
                         <div class="game-details-minimalist">
-                            <p>${minimalistHomeName} vs ${minimalistAwayName} (<span class="status">${game.status.long}</span>)</p>
-                            <p style="text-align: center;">${new Date(game.date.start).toLocaleTimeString()}</p>
+                            <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> ${minimalistHomeName.abbreviation} vs  ${minimalistAwayName.abbreviation}<img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"></p>
+                            <p class="status">${game.status.long} ${new Date(game.date.start).toLocaleTimeString()}</p>
                         </div>`;
                     gamesElement.appendChild(gameDiv);
                 }else{
@@ -179,7 +179,7 @@ async function fetchData(selectedDate) {
                     // Display minimalist view for games in play
                     gameDiv.innerHTML = `
                         <div class="game-details-minimalist">
-                        <p>${minimalistHomeName} <span class="score-minimalist">${game.scores.home.points}</span> - <span class="score-minimalist">${game.scores.visitors.points}</span> ${minimalistAwayName} (Q${game.periods.current} - ${game.status.clock} </span>)</p>
+                        <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> ${minimalistHomeName.abbreviation} <span class="score-minimalist">${game.scores.home.points}</span> - <span class="score-minimalist">${game.scores.visitors.points}</span> ${minimalistAwayName.abbreviation}<img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"><p class="status> Q${game.periods.current} - ${game.status.clock} </p></p>
                         </div>`;
                     gamesElement.appendChild(gameDiv);
                 }else{
@@ -253,9 +253,6 @@ async function fetchData(selectedDate) {
                 }
                 
             }
-
-            
-
         }
     } catch (error) {
         console.error(error);

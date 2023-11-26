@@ -1,94 +1,94 @@
 export function name(teamName) {
     switch(teamName){
         case "Boston Celtics":
-            return "BOS";
+            return { abbreviation: "BOS", badgeURL: "./Logos/Celtics.png" };
             break;
         case "Brooklyn Nets":
-            return "BRO";
+            return { abbreviation: "BRO", badgeURL: "./Logos/Nets.png" };
             break;  
         case "New York Knicks":
-            return "NYK";
+            return { abbreviation: "NYK", badgeURL: "./Logos/Knicks.png" };
             break;
         case "Philadelphia 76ers":
-            return "PHI";
+            return { abbreviation: "PHI", badgeURL: "./Logos/Phila.png" };
             break;
         case "Toronto Raptors":
-            return "TOR";
+            return { abbreviation: "TOR", badgeURL: "./Logos/Raptors.png" };
             break;
         case "Chicago Bulls":
-            return "CHI";
+            return { abbreviation: "CHI", badgeURL: "./Logos/Bulls.png" };
             break;
         case "Cleveland Cavaliers":
-            return "CLE";
+            return { abbreviation: "CLE", badgeURL: "./Logos/Cavs.png" };
             break;
         case "Detroit Pistons":
-            return "DET";
+            return { abbreviation: "DET", badgeURL: "./Logos/Pistons.png" };
             break;
         case "Indiana Pacers":
-            return "IND";
+            return { abbreviation: "IND", badgeURL: "./Logos/Pacers.png" };
             break;
         case "Milwaukee Bucks":
-            return "MIL";
+            return { abbreviation: "MIL", badgeURL: "./Logos/Bucks.png" };
             break;
         case "Atlanta Hawks":
-            return "ATL";
+            return { abbreviation: "ATL", badgeURL: "./Logos/Hawks.png" };
             break;
         case "Charlotte Hornets":
-            return "CHA";
+            return { abbreviation: "CHA", badgeURL: "./Logos/Hornets.png" };
             break;
         case "Miami Heat":
-            return "MIA";
+            return { abbreviation: "MIA", badgeURL: "./Logos/Heat.png" };
             break;
         case "Orlando Magic":
-            return "ORL";
+            return { abbreviation: "ORL", badgeURL: "./Logos/Magic.png" };
             break;
         case "Washington Wizards":
-            return "WAS";
+            return { abbreviation: "WAS", badgeURL: "./Logos/Wizards.png" };
             break;
         case "Dallas Mavericks":
-            return "DAL";
+            return { abbreviation: "DAL", badgeURL: "./Logos/Mavs.png" };
             break;
         case "Houston Rockets":
-            return "HOU";
+            return { abbreviation: "HOU", badgeURL: "./Logos/Rockets.png" };
             break;
         case "Memphis Grizzlies":
-            return "MEM";
+            return { abbreviation: "MEM", badgeURL: "./Logos/Grizzlies.png" };
             break;
         case "New Orleans Pelicans":
-            return "NOP";
+            return { abbreviation: "NOP", badgeURL: "./Logos/Pels.png" };
             break;
         case "San Antonio Spurs":
-            return "SAS";
+            return { abbreviation: "SAS", badgeURL: "./Logos/Spurs.png" };
             break;
         case "Denver Nuggets":
-            return "DEN";
+            return { abbreviation: "DEN", badgeURL: "./Logos/Nuggets.png" };
             break;
         case "Minnesota Timberwolves":
-            return "MIN";
+            return { abbreviation: "MIN", badgeURL: "./Logos/Wolves.png" };
             break;
         case "Oklahoma City Thunder":
-            return "OKC";
+            return { abbreviation: "OKC", badgeURL: "./Logos/Okc.png" };
             break;
         case "Portland Trail Blazers":
-            return "POR";
+            return { abbreviation: "POR", badgeURL: "./Logos/Blazers.png" };
             break;
         case "Utah Jazz":
-            return "UTA";
+            return { abbreviation: "UTA", badgeURL: "./Logos/Jazz.png" };
             break;
         case "Golden State Warriors":
-            return "GSW";
+            return { abbreviation: "GSW", badgeURL: "./Logos/Warriors.png" };
             break;
         case "LA Clippers":
-            return "LAC";
+            return { abbreviation: "LAC", badgeURL: "./Logos/Clippers.png" };
             break;
         case "Los Angeles Lakers":
-            return "LAL";
+            return { abbreviation: "LAL", badgeURL: "./Logos/Lakers.png" };
             break;
         case "Phoenix Suns":
-            return "PHX";
+            return { abbreviation: "PHX", badgeURL: "./Logos/Suns.png" };
             break;
         case "Sacramento Kings":
-            return "SAC";
+            return { abbreviation: "SAC", badgeURL: "./Logos/Kings.png" };
             break;
         default:
             return "Team not found";

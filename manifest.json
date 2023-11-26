@@ -4,7 +4,14 @@
     "description": "A list of upcoming NBA games",
     "manifest_version": 3,
     "author": "Nuno Matos",
+
     "action": {
+        "default_icon": {
+            "16": "icon.png",
+            "32": "icon.png",
+            "48": "icon.png",
+            "128": "icon.png"
+        },
         "default_popup": "index.html",
         "default_title": "Daily NBA Schedule"
     }
