@@ -25,6 +25,31 @@ const datePicker = document.getElementById('date-picker');
 const viewSwitch = document.getElementById('view-switch');
 const gamesElement = document.getElementById("games");
 
+// Add event listeners to the filter buttons
+const filterLiveBtn = document.getElementById('filter-live');
+const filterFinishedBtn = document.getElementById('filter-finished');
+const filterScheduledBtn = document.getElementById('filter-scheduled');
+const filterAllBtn = document.getElementById('filter-all');
+
+filterLiveBtn.addEventListener('click', () => filterGames('In Play'));
+filterFinishedBtn.addEventListener('click', () => filterGames('Finished'));
+filterScheduledBtn.addEventListener('click', () => filterGames('Scheduled'));
+filterAllBtn.addEventListener('click', () => filterGames('All'));
+
+// Function to filter games based on status
+function filterGames(status) {
+    const gameItems = document.querySelectorAll('.game-item, .game-item-minimalist');
+    gameItems.forEach((item) => {
+        const gameStatus = item.getAttribute('data-status');
+        if (status === 'All' || gameStatus === status) {
+            item.style.display = 'block'; // Show the game
+        } else {
+            item.style.display = 'none'; // Hide the game
+        }
+    });
+}
+
+
 
 viewSwitch.addEventListener('change', async () => {
     const selectedDate = datePicker.value;
@@ -68,6 +93,15 @@ async function fetchData(selectedDate) {
                 gameDiv.classList.add("game-item-minimalist");
             }else{
                 gameDiv.classList.add("game-item");
+            }
+
+            // Filter the games by status
+            if (game.status.long === 'Finished') {
+                gameDiv.setAttribute('data-status', 'Finished');
+            } else if (game.status.long === 'In Play') {
+                gameDiv.setAttribute('data-status', 'In Play');
+            } else if (game.status.long === 'Scheduled') {
+                gameDiv.setAttribute('data-status', 'Scheduled');
             }
             
             if(game.status.long === "Finished"){
