@@ -39,7 +39,12 @@ By selecting the minimalist mode, all the games display goes into a smaller and 
   - Time
 
 # How to use?
-To use the Extension, fill the **api-key** and the **api-host** in both requests with your data from the api __[https://rapidapi.com/api-sports/api/api-nba](https://rapidapi.com/api-sports/api/api-nba)__
+1. Fill the **api-key** and the **api-host** in both requests with your data from the api __[https://rapidapi.com/api-sports/api/api-nba](https://rapidapi.com/api-sports/api/api-nba)__;
+2. Open Chrome "manage extensions" window;
+3. Activate the developer mode in the top right corner;
+4. Click "Load Unpacked" in the top left corner;
+5. Select your folder and confirm;
+6. That's it, the extension is ready to use.
  
   # Some Examples
   <img src="https://github.com/Nunomatos7/NBA-Chrome-Extension/assets/84334113/7a47bcec-2f2c-4c0f-b913-444ec60cb68a" width="250" >
