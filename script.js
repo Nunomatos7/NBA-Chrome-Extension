@@ -5,8 +5,8 @@ async function fetchPlayerStatistics(gameId) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b11c7d60bbmsh6027f68419566eap177772jsn6d61a497f998',
-            'X-RapidAPI-Host': 'api-nba-v1.p.rapidapi.com'
+            'X-RapidAPI-Key': '',
+            'X-RapidAPI-Host': ''
         }
     };
 
@@ -65,8 +65,8 @@ async function fetchData(selectedDate) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b11c7d60bbmsh6027f68419566eap177772jsn6d61a497f998',
-            'X-RapidAPI-Host': 'api-nba-v1.p.rapidapi.com'
+            'X-RapidAPI-Key': '',
+            'X-RapidAPI-Host': ''
         }
     };
 

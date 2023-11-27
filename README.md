@@ -37,6 +37,9 @@ By selecting the minimalist mode, all the games display goes into a smaller and 
   - Teams
   - Score
   - Time
+
+# How to use?
+To use the Extension, fill the **api-key** and the **api-host** in both requests with your data from the api __[https://rapidapi.com/api-sports/api/api-nba](https://rapidapi.com/api-sports/api/api-nba)__
  
   # Some Examples
   <img src="https://github.com/Nunomatos7/NBA-Chrome-Extension/assets/84334113/7a47bcec-2f2c-4c0f-b913-444ec60cb68a" width="250" >
