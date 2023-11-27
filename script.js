@@ -81,6 +81,12 @@ async function fetchData(selectedDate) {
             const awayLinescore = game.scores.visitors.linescore;
 
             
+            //Only get the hour and min
+            const gameStartTime = new Date(game.date.start);
+            const startTimeString = gameStartTime.toLocaleTimeString(undefined, {
+                hour: 'numeric',
+                minute: 'numeric',
+            });
 
             // Check the switch state to determine the view
             const minimalistView = viewSwitch.checked;
@@ -116,16 +122,19 @@ async function fetchData(selectedDate) {
                     gamesElement.appendChild(gameDiv);
                 }else{
                     gameDiv.innerHTML = `
-                    <div class="game-details">
-                        <p>${new Date(game.date.start).toLocaleTimeString()}</p>
+                    <div class="game-details">  
                         <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
+                        <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> vs <img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"></p> 
+                        <p>${startTimeString}</p>
                         <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
-                        <table class="linescore-table">
-                            <tr>${homeLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
-                            <tr>${awayLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
-                        </table>
+                        
                     </div>`;
                     gamesElement.appendChild(gameDiv);
+
+                    // <table class="linescore-table">
+                    //         <tr>${homeLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
+                    //         <tr>${awayLinescore.map((score) => `<td>${score}</td>`).join('')}</tr>
+                    // </table>
 
                     const playerStats = await fetchPlayerStatistics(game.id);
 
@@ -196,14 +205,15 @@ async function fetchData(selectedDate) {
                     gameDiv.innerHTML = `
                         <div class="game-details-minimalist">
                             <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> ${minimalistHomeName.abbreviation} vs  ${minimalistAwayName.abbreviation}<img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"></p>
-                            <p class="status">${game.status.long} ${new Date(game.date.start).toLocaleTimeString()}</p>
+                            <p class="status">${game.status.long} ${startTimeString}</p>
                         </div>`;
                     gamesElement.appendChild(gameDiv);
                 }else{
                     gameDiv.innerHTML = `
                     <div class="game-details">
-                        <p>${new Date(game.date.start).toLocaleTimeString()}</p>
                         <p>${game.teams.home.name} vs ${game.teams.visitors.name} (<span class="status">${game.status.long}</span>)</p>
+                        <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> vs <img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"></p> 
+                        <p>${startTimeString}</p>
                         <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
                     </div>`;
                     gamesElement.appendChild(gameDiv);
@@ -219,8 +229,9 @@ async function fetchData(selectedDate) {
                 }else{
                     gameDiv.innerHTML = `
                     <div class="game-details">
-                        <p>${new Date(game.date.start).toLocaleTimeString()}</p>
                         <p>${game.teams.home.name} <span class="score">${game.scores.home.points}</span> - <span class="score">${game.scores.visitors.points}</span> ${game.teams.visitors.name} (Q${game.periods.current} - ${game.status.clock} </span>)</p>
+                        <p><img src="${minimalistHomeName.badgeURL}" alt="${minimalistHomeName.abbreviation} Logo" class="team-logo"> vs <img src="${minimalistAwayName.badgeURL}" alt="${minimalistAwayName.abbreviation} Logo" class="team-logo"></p> 
+                        <p>${startTimeString}</p>
                         <p>${game.arena.name ? `${game.arena.name}, ${game.arena.city}` : 'Location details not available'}</p>
                     </div>`;
                     gamesElement.appendChild(gameDiv);
@@ -314,8 +325,6 @@ datePicker.addEventListener('change', async () => {
     await fetchData(selectedDate);
     fetchData(selectedDate);
 });
-
-
 
 
 
